@@ -33,7 +33,7 @@ stages {
                         docker login -u khadar3099 -p ${dockerhubpassword}
                         docker image push khadar3099/$JOB_NAME:v1.$BUILD_ID
                         docker rmi khadar3099/$JOB_NAME:v1.$BUILD_ID
-                        docker run --name k8s-container -p 9191:8080 khadar3099/$JOB_NAME:v1.$BUILD_ID
+                        docker run --name k8s-container -d -p 9191:8080 khadar3099/$JOB_NAME:v1.$BUILD_ID
                         exit
                         EOF
                         '''
