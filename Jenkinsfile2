@@ -17,5 +17,29 @@ stages {
                 }
             }
         }
+        stage ('Docker Build Stage') {
+            steps {
+                script {
+                    sh 'docker image build -t $JOB_NAME:v1.$BUILD_ID .'
+                    sh 'docker image tag $JOB_NAME:v1.$BUILD_ID khadar3099/$JOB_NAME:v1.$BUILD_ID'
+                }
+            }
+        }
+        stage ('push docker image to  dockerhub') {
+            steps {
+                script {
+                   withCredentials([string(credentialsId: 'dockrpswd', variable: 'dockerhubpassword')]) {
+                        sh '''
+                        docker login -u khadar3099 -p ${dockerhubpassword}
+                        docker image push khadar3099/$JOB_NAME:v1.$BUILD_ID
+                        docker rmi khadar3099/$JOB_NAME:v1.$BUILD_ID
+                        docker run --name k8s-container -p 9191:8080 khadar3099/$JOB_NAME:v1.$BUILD_ID
+                        exit
+                        EOF
+                        '''
+                        }
+                    }
+                }
+            }
     }   
 }
